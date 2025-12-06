@@ -13,62 +13,49 @@ class SplashScreen extends ConsumerStatefulWidget {
 }
 
 class _SplashScreenState extends ConsumerState<SplashScreen> {
+  bool _hasNavigated = false;
   bool _hasCheckedInitialState = false;
+
+  void _navigateBasedOnAuthState(AsyncValue<User?> authState) {
+    if (_hasNavigated || !mounted) return;
+
+    authState.when(
+      data: (user) {
+        if (_hasNavigated || !mounted) return;
+        _hasNavigated = true;
+        if (user != null) {
+          context.go('/home');
+        } else {
+          context.go('/login');
+        }
+      },
+      loading: () {
+        // Still loading, wait for completion
+      },
+      error: (error, stack) {
+        if (_hasNavigated || !mounted) return;
+        _hasNavigated = true;
+        context.go('/login');
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     // Listen to auth state changes and navigate when determined
     ref.listen<AsyncValue<User?>>(authNotifierProvider, (previous, next) {
-      next.when(
-        data: (user) {
-          if (user != null) {
-            // User is authenticated, navigate to home
-            if (mounted) {
-              context.go('/home');
-            }
-          } else {
-            // User is not authenticated, navigate to login
-            if (mounted) {
-              context.go('/login');
-            }
-          }
-        },
-        loading: () {
-          // Still loading, wait for completion
-        },
-        error: (error, stack) {
-          // Error occurred, navigate to login
-          if (mounted) {
-            context.go('/login');
-          }
-        },
-      );
+      _navigateBasedOnAuthState(next);
     });
 
     // Check initial state in case loading already completed before listener was set
-    // Only check once to avoid multiple navigation attempts
+    // Only check once to avoid multiple callback registrations
     if (!_hasCheckedInitialState) {
+      _hasCheckedInitialState = true;
+      final authState = ref.read(authNotifierProvider);
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (!mounted) return;
-        _hasCheckedInitialState = true;
-        final authState = ref.read(authNotifierProvider);
-        authState.when(
-          data: (user) {
-            if (user != null && mounted) {
-              context.go('/home');
-            } else if (mounted) {
-              context.go('/login');
-            }
-          },
-          loading: () {
-            // Still loading, wait for ref.listen to handle it
-          },
-          error: (error, stack) {
-            if (mounted) {
-              context.go('/login');
-            }
-          },
-        );
+        if (!_hasNavigated && mounted) {
+          _navigateBasedOnAuthState(authState);
+        }
       });
     }
 
