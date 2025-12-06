@@ -48,11 +48,9 @@ CREATE POLICY "Allow public read" ON public.tenants
   FOR SELECT USING (true);
 
 -- Allow users to read their own record
+-- Simplified policy to avoid infinite recursion (removed admin check that caused recursion)
 CREATE POLICY "Allow users to read own record" ON public.users
-  FOR SELECT USING (
-    auth.uid() = id OR
-    auth.uid()::text IN (SELECT id::text FROM public.users WHERE tenant_id = users.tenant_id AND role = 'admin')
-  );
+  FOR SELECT USING (auth.uid() = id);
 
 -- Allow authenticated users to update their own record
 CREATE POLICY "Allow users to update own record" ON public.users
