@@ -10,7 +10,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Load environment variables from .env file
-  await dotenv.load();
+  await dotenv.load(fileName: ".env");
 
   // Initialize Sentry for error monitoring
   final sentryDsn = dotenv.env['SENTRY_DSN'];
