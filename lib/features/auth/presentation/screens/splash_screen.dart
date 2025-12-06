@@ -13,66 +13,65 @@ class SplashScreen extends ConsumerStatefulWidget {
 }
 
 class _SplashScreenState extends ConsumerState<SplashScreen> {
-  @override
-  void initState() {
-    super.initState();
-    // Listen to auth state changes and navigate when determined
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.listen<AsyncValue<User?>>(authNotifierProvider, (previous, next) {
-        next.when(
-          data: (user) {
-            if (user != null) {
-              // User is authenticated, navigate to home
-              if (mounted) {
-                context.go('/home');
-              }
-            } else {
-              // User is not authenticated, navigate to login
-              if (mounted) {
-                context.go('/login');
-              }
-            }
-          },
-          loading: () {
-            // Still loading, wait for completion
-          },
-          error: (error, stack) {
-            // Error occurred, navigate to login
-            if (mounted) {
-              context.go('/login');
-            }
-          },
-        );
-      });
+  bool _hasCheckedInitialState = false;
 
-      // Check initial state (in case session restore completed before listener was set)
-      final currentState = ref.read(authNotifierProvider);
-      currentState.when(
+  @override
+  Widget build(BuildContext context) {
+    // Listen to auth state changes and navigate when determined
+    ref.listen<AsyncValue<User?>>(authNotifierProvider, (previous, next) {
+      next.when(
         data: (user) {
           if (user != null) {
+            // User is authenticated, navigate to home
             if (mounted) {
               context.go('/home');
             }
           } else {
+            // User is not authenticated, navigate to login
             if (mounted) {
               context.go('/login');
             }
           }
         },
         loading: () {
-          // Wait for completion
+          // Still loading, wait for completion
         },
         error: (error, stack) {
+          // Error occurred, navigate to login
           if (mounted) {
             context.go('/login');
           }
         },
       );
     });
-  }
 
-  @override
-  Widget build(BuildContext context) {
+    // Check initial state in case loading already completed before listener was set
+    // Only check once to avoid multiple navigation attempts
+    if (!_hasCheckedInitialState) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        _hasCheckedInitialState = true;
+        final authState = ref.read(authNotifierProvider);
+        authState.when(
+          data: (user) {
+            if (user != null && mounted) {
+              context.go('/home');
+            } else if (mounted) {
+              context.go('/login');
+            }
+          },
+          loading: () {
+            // Still loading, wait for ref.listen to handle it
+          },
+          error: (error, stack) {
+            if (mounted) {
+              context.go('/login');
+            }
+          },
+        );
+      });
+    }
+
     return Scaffold(
       body: Center(
         child: Column(
