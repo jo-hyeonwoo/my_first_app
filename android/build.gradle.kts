@@ -5,18 +5,6 @@ allprojects {
     }
 }
 
-subprojects {
-    afterEvaluate {
-        if (plugins.hasPlugin("org.jetbrains.kotlin.android") || plugins.hasPlugin("kotlin-android")) {
-            tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-                kotlinOptions {
-                    languageVersion = "1.9"
-                    apiVersion = "1.9"
-                }
-            }
-        }
-    }
-}
 
 val newBuildDir: Directory =
     rootProject.layout.buildDirectory
