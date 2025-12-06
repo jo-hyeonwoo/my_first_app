@@ -9,7 +9,9 @@ import '../../domain/services/ai_plan_service.dart';
 
 class GeminiPlanService implements AiPlanService {
   final _uuid = const Uuid();
-  static const String _modelName = 'gemini-1.5-flash';
+  // Use gemini-pro which is more widely supported
+  // If you need gemini-1.5-flash, ensure your API key has access to it
+  static const String _modelName = 'gemini-pro';
 
   @override
   Future<List<StudentPlan>> generatePlan({
