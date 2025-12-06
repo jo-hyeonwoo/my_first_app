@@ -131,6 +131,70 @@ void initState() {
 }
 ```
 
+## 추가 개선 사항 (2025-01-27)
+
+### 중복 네비게이션 방지
+
+**문제:**
+- `/login`으로 3번 이동하는 중복 네비게이션 발생
+- `ref.listen`과 초기 상태 체크가 각각 네비게이션을 시도
+
+**해결:**
+- `_hasNavigated` 플래그 추가: 네비게이션이 한 번만 실행되도록 보장
+- `_navigateBasedOnAuthState` 헬퍼 메서드: 중복 체크 로직을 한 곳에 통합
+- 네비게이션 전에 플래그를 확인하여 중복 실행 방지
+
+**수정된 코드:**
+```dart
+class _SplashScreenState extends ConsumerState<SplashScreen> {
+  bool _hasNavigated = false;
+  bool _hasCheckedInitialState = false;
+
+  void _navigateBasedOnAuthState(AsyncValue<User?> authState) {
+    if (_hasNavigated || !mounted) return;
+
+    authState.when(
+      data: (user) {
+        if (_hasNavigated || !mounted) return;
+        _hasNavigated = true;
+        if (user != null) {
+          context.go('/home');
+        } else {
+          context.go('/login');
+        }
+      },
+      loading: () {
+        // Still loading, wait for completion
+      },
+      error: (error, stack) {
+        if (_hasNavigated || !mounted) return;
+        _hasNavigated = true;
+        context.go('/login');
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    ref.listen<AsyncValue<User?>>(authNotifierProvider, (previous, next) {
+      _navigateBasedOnAuthState(next);
+    });
+
+    if (!_hasCheckedInitialState) {
+      _hasCheckedInitialState = true;
+      final authState = ref.read(authNotifierProvider);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!_hasNavigated && mounted) {
+          _navigateBasedOnAuthState(authState);
+        }
+      });
+    }
+
+    return Scaffold(...);
+  }
+}
+```
+
 ## 관련 파일
 
 - `lib/features/auth/presentation/screens/splash_screen.dart`: SplashScreen 구현
