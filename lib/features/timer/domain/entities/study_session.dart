@@ -5,7 +5,7 @@ part 'study_session.g.dart';
 
 enum StudySessionStatus { initial, running, paused, completed }
 
-@freezed
+@Freezed(toJson: true, fromJson: true)
 class StudySession with _$StudySession {
   const factory StudySession({
     required String id,

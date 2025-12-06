@@ -8,7 +8,7 @@ import './student_home_screen.dart';
 
 /// Wrapper widget that renders different home screens based on user role
 class HomeScreenWrapper extends ConsumerWidget {
-  const HomeScreenWrapper({Key? key}) : super(key: key);
+  const HomeScreenWrapper({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

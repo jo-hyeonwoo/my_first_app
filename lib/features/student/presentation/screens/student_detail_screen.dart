@@ -15,10 +15,10 @@ class StudentDetailScreen extends ConsumerWidget {
   final String studentName;
 
   const StudentDetailScreen({
-    Key? key,
+    super.key,
     required this.studentId,
     required this.studentName,
-  }) : super(key: key);
+  });
 
   String _koreanDateHeader(DateTime date) {
     final df = DateFormat('M월 d일 (E)', 'ko_KR');
@@ -107,8 +107,8 @@ class StudentDetailScreen extends ConsumerWidget {
         slivers: [
           SliverAppBar(
             pinned: true,
-            backgroundColor: Theme.of(context).colorScheme.background,
-            foregroundColor: Theme.of(context).colorScheme.onBackground,
+            backgroundColor: Theme.of(context).colorScheme.surface,
+            foregroundColor: Theme.of(context).colorScheme.onSurface,
             automaticallyImplyLeading: false,
             elevation: 0,
             expandedHeight: 80,
@@ -302,7 +302,7 @@ class StudentDetailScreen extends ConsumerWidget {
                           ),
                         ),
                       );
-                    }).toList(),
+                    }),
                   ],
                 ),
               ),

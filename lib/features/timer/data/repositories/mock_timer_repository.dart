@@ -1,11 +1,9 @@
 import 'dart:async';
-import 'package:uuid/uuid.dart';
 
 import '../../domain/entities/study_session.dart';
 import '../../domain/repositories/timer_repository.dart';
 
 class MockTimerRepository implements TimerRepository {
-  final _uuid = const Uuid();
 
   @override
   Future<void> saveSession(

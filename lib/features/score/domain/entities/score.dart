@@ -3,7 +3,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 part 'score.freezed.dart';
 part 'score.g.dart';
 
-@freezed
+@Freezed(toJson: true, fromJson: true)
 class Score with _$Score {
   const factory Score({
     required String id,

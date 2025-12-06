@@ -78,7 +78,9 @@ class TimerScreen extends ConsumerWidget {
                   onPressed: () async {
                     await notifier.stop();
                     // go back after stopping
-                    context.pop();
+                    if (context.mounted) {
+                      context.pop();
+                    }
                   },
                   icon: const Icon(Icons.stop),
                   label: const Text('Stop'),

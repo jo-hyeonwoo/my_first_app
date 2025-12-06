@@ -8,7 +8,7 @@ import '../providers/student_list_provider.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
 
 class ConsultantDashboardScreen extends ConsumerWidget {
-  const ConsultantDashboardScreen({Key? key}) : super(key: key);
+  const ConsultantDashboardScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -34,7 +34,7 @@ class ConsultantDashboardScreen extends ConsumerWidget {
                       end: Alignment.bottomRight,
                       colors: [
                         Theme.of(context).colorScheme.primary,
-                        Theme.of(context).colorScheme.primary.withOpacity(0.7),
+                        Theme.of(context).colorScheme.primary.withValues(alpha: 0.7),
                       ],
                     ),
                   ),
@@ -177,8 +177,8 @@ class ConsultantDashboardScreen extends ConsumerWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
                       color: isActive
-                          ? Colors.green.withOpacity(0.1)
-                          : Colors.grey.withOpacity(0.1),
+                          ? Colors.green.withValues(alpha: 0.1)
+                          : Colors.grey.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(
                         color: isActive ? Colors.green : Colors.grey,

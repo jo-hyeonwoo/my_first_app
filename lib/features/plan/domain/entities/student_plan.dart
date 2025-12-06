@@ -7,7 +7,7 @@ enum PlanItemType { study, review }
 
 enum PlanItemStatus { pending, inProgress, completed, missed }
 
-@freezed
+@Freezed(toJson: true, fromJson: true)
 class StudentPlan with _$StudentPlan {
   const factory StudentPlan({
     required String id,
