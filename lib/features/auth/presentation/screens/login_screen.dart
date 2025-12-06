@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../domain/exceptions/auth_exception.dart';
 import '../providers/auth_provider.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
@@ -54,6 +55,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       if (mounted) {
         context.go('/home');
       }
+    } on AuthException catch (e) {
+      final errorMessage = e.when(
+        invalidCredentials: () => '이메일 또는 비밀번호가 올바르지 않습니다.',
+        networkError: () => '네트워크 연결을 확인해주세요. 서버에 연결할 수 없습니다.',
+        unknown: (message) => '로그인 중 오류가 발생했습니다: $message',
+      );
+      _showError(errorMessage);
     } catch (e) {
       _showError('로그인 실패: $e');
     }

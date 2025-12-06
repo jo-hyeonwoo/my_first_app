@@ -43,6 +43,7 @@ class RealAuthRepository implements AuthRepository {
     } on AuthException {
       rethrow;
     } on AuthApiException catch (e, stackTrace) {
+      print('AuthApiException during login: ${e.statusCode} - ${e.message}');
       if (e.statusCode == '401' || e.message.contains('Invalid credentials')) {
         throw AuthException.invalidCredentials();
       }
@@ -51,19 +52,28 @@ class RealAuthRepository implements AuthRepository {
         e,
         stackTrace: stackTrace,
         hint: Hint.withMap({
-          'context': 'Auth Login',
+          'context': 'Auth Login - AuthApiException',
           'email': email,
+          'statusCode': e.statusCode ?? 'unknown',
+          'message': e.message,
         }),
       );
       throw AuthException.networkError();
     } catch (e, stackTrace) {
+      // Log detailed error information
+      print('Error during login: $e');
+      print('Error type: ${e.runtimeType}');
+      print('Stack trace: $stackTrace');
+      
       // Send unknown errors to Sentry
       await Sentry.captureException(
         e,
         stackTrace: stackTrace,
         hint: Hint.withMap({
-          'context': 'Auth Login',
+          'context': 'Auth Login - Unknown Error',
           'email': email,
+          'errorType': e.runtimeType.toString(),
+          'errorMessage': e.toString(),
         }),
       );
       throw AuthException.unknown(e.toString());
