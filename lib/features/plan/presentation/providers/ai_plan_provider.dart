@@ -10,7 +10,7 @@ part 'ai_plan_provider.g.dart';
 /// Provider for AI Plan Service
 /// Uses AiServiceFactory to create the appropriate service based on AI_PROVIDER env var
 @riverpod
-AiPlanService aiPlanService(AiPlanServiceRef ref) {
+AiPlanService aiPlanService(Ref ref) {
   return AiServiceFactory.create();
 }
 

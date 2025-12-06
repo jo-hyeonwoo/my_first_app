@@ -31,7 +31,6 @@ class GeminiPlanService implements AiPlanService {
         apiKey: apiKey,
         generationConfig: GenerationConfig(
           temperature: 0.7,
-          responseMimeType: 'application/json',
         ),
       );
 

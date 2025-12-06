@@ -8,12 +8,12 @@ import '../../../auth/presentation/providers/auth_provider.dart';
 part 'student_list_provider.g.dart';
 
 @riverpod
-StudentRepository studentRepository(StudentRepositoryRef ref) {
+StudentRepository studentRepository(Ref ref) {
   return RealStudentRepository();
 }
 
 @riverpod
-Future<List<Student>> managedStudents(ManagedStudentsRef ref) async {
+Future<List<Student>> managedStudents(Ref ref) async {
   final authState = ref.watch(authNotifierProvider);
   
   final user = authState.maybeWhen(

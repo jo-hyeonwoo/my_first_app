@@ -6,7 +6,7 @@ part of 'plan_providers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$todayPlansHash() => r'fd0b579ac30158c74e4c331e094e716393839a20';
+String _$todayPlansHash() => r'f661d9ddfba8cb4c8a79681b83e6145a00627580';
 
 /// Copied from Dart SDK
 class _SystemHash {

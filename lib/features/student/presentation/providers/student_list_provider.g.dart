@@ -6,7 +6,7 @@ part of 'student_list_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$studentRepositoryHash() => r'a6d3d36fe739f3481528ffb445169846bd4a51b3';
+String _$studentRepositoryHash() => r'f84302a443b6060e6df9a4f3255f0558f93f010f';
 
 /// See also [studentRepository].
 @ProviderFor(studentRepository)
@@ -24,7 +24,7 @@ final studentRepositoryProvider =
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef StudentRepositoryRef = AutoDisposeProviderRef<StudentRepository>;
-String _$managedStudentsHash() => r'43e2295af89dc941a10bd7304e21da60a835fde0';
+String _$managedStudentsHash() => r'29548e0cc21894476585c0032e64d5f8581424fc';
 
 /// See also [managedStudents].
 @ProviderFor(managedStudents)

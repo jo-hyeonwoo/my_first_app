@@ -5,7 +5,6 @@ import 'package:intl/intl.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../../auth/presentation/providers/auth_provider.dart';
-import '../../domain/entities/student_plan.dart';
 import '../../presentation/providers/ai_plan_provider.dart';
 import '../../presentation/providers/plan_providers.dart';
 import '../../presentation/widgets/plan_card.dart';

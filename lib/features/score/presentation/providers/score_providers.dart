@@ -12,7 +12,7 @@ final scoreRepositoryProvider = Provider<ScoreRepository>((ref) {
 });
 
 @riverpod
-Future<List<Score>> scoreList(ScoreListRef ref, String studentId) async {
+Future<List<Score>> scoreList(Ref ref, String studentId) async {
   final repo = ref.read(scoreRepositoryProvider);
   return await repo.getScores(studentId);
 }

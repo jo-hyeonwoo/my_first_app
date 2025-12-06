@@ -8,7 +8,7 @@ import '../../domain/repositories/auth_repository.dart';
 part 'auth_provider.g.dart';
 
 @riverpod
-AuthRepository authRepository(AuthRepositoryRef ref) {
+AuthRepository authRepository(Ref ref) {
   return RealAuthRepository();
 }
 
@@ -59,7 +59,7 @@ class AuthNotifier extends _$AuthNotifier {
 }
 
 @riverpod
-Future<List<Tenant>> availableTenants(AvailableTenantsRef ref) async {
+Future<List<Tenant>> availableTenants(Ref ref) async {
   final authRepo = ref.watch(authRepositoryProvider);
   return authRepo.getAvailableTenants();
 }

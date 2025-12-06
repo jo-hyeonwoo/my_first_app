@@ -124,9 +124,6 @@ class RealAuthRepository implements AuthRepository {
       }
 
       final authUser = session.user;
-      if (authUser == null) {
-        return null;
-      }
 
       // Query user details from public.users table
       final userData = await _supabase

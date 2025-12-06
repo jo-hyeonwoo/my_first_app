@@ -1,4 +1,3 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../domain/entities/student_plan.dart';
@@ -19,7 +18,7 @@ final planRepositoryProvider = Provider<PlanRepository>((ref) {
 });
 
 @riverpod
-Future<List<StudentPlan>> todayPlans(TodayPlansRef ref, String studentId) async {
+Future<List<StudentPlan>> todayPlans(Ref ref, String studentId) async {
   final repo = ref.read(planRepositoryProvider);
   final date = ref.read(currentDateProvider);
 
