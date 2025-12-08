@@ -6,7 +6,7 @@ AI 플랜 생성 시 다음 오류가 계속 발생했습니다:
 
 ```
 Exception: Failed to generate plans with Gemini:
-models/gemini-1.5-flash is not found for API version v1, 
+models/gemini-1.5-flash is not found for API version v1,
 or is not supported for generateContent.
 ```
 
@@ -35,6 +35,7 @@ Google 공식 문서에 따르면 다음 모델들이 지원됩니다:
 ### 안정 버전 (Stable) - 프로덕션 권장
 
 - **`gemini-2.5-flash`** ⭐ (현재 사용 중)
+
   - 최신 안정 버전
   - 프로덕션 사용 권장
   - 빠른 응답 속도
@@ -68,6 +69,7 @@ Google 공식 문서에 따르면 다음 모델들이 지원됩니다:
 ## 다음 단계
 
 1. 앱을 재시작하세요:
+
    ```bash
    flutter run
    ```
@@ -90,8 +92,3 @@ static const String _modelName = 'gemini-2.5-flash-lite';
 // 옵션 3: 프로 미리보기
 static const String _modelName = 'gemini-3-pro-preview';
 ```
-
-
-
-
-
