@@ -40,10 +40,10 @@ class GeminiPlanService implements AiPlanService {
       final subjectsText = focusSubjects.join(', ');
       final prompt = _buildPrompt(subjectsText, availableMinutes);
 
-      // Generate content
+      // Generate content - explicitly request JSON only, no explanatory text
       final response = await model.generateContent([
         Content.text(
-          '너는 입시 전문가야. 주어진 과목과 시간을 바탕으로 구체적인 학습 계획을 JSON 형태로 짜줘.\n\n$prompt',
+          '다음 조건에 맞는 학습 플랜을 JSON 형식으로만 반환해줘. 설명 없이 JSON만 반환해야 해.\n\n$prompt',
         ),
       ]);
 
@@ -52,10 +52,20 @@ class GeminiPlanService implements AiPlanService {
         throw Exception('Empty response from Gemini API');
       }
 
-      // Clean and parse JSON response (handles markdown code blocks)
+      // Clean and parse JSON response (handles markdown code blocks and explanatory text)
       final cleanedJson = JsonUtils.cleanJsonString(responseText);
-      final plansJson = jsonDecode(cleanedJson) as Map<String, dynamic>;
-      return _parsePlansFromJson(plansJson, studentId, tenantId, planDate);
+      
+      try {
+        final plansJson = jsonDecode(cleanedJson) as Map<String, dynamic>;
+        return _parsePlansFromJson(plansJson, studentId, tenantId, planDate);
+      } on FormatException catch (e) {
+        // If JSON parsing fails, provide more context in the error
+        throw Exception(
+          'Failed to parse JSON from Gemini response. '
+          'Response text: ${responseText.substring(0, responseText.length > 200 ? 200 : responseText.length)}... '
+          'Error: $e',
+        );
+      }
     } catch (e) {
       throw Exception('Failed to generate plans with Gemini: $e');
     }
@@ -63,13 +73,14 @@ class GeminiPlanService implements AiPlanService {
 
   String _buildPrompt(String subjects, int availableMinutes) {
     return '''
-다음 조건에 맞는 학습 플랜을 JSON 형식으로 만들어줘:
+다음 조건에 맞는 학습 플랜을 JSON 형식으로만 반환해줘. 설명이나 서문 없이 순수 JSON만 반환해야 해.
 
+조건:
 - 중점 과목: $subjects
 - 가용 시간: $availableMinutes분
 - 오늘 날짜: ${DateTime.now().year}년 ${DateTime.now().month}월 ${DateTime.now().day}일
 
-응답 형식은 다음과 같은 JSON 구조여야 해:
+반환해야 할 JSON 구조 (이 형식 그대로 반환):
 {
   "plans": [
     {
@@ -81,7 +92,7 @@ class GeminiPlanService implements AiPlanService {
   ]
 }
 
-각 플랜은 구체적이고 실행 가능해야 해. 총 시간은 $availableMinutes분을 넘지 않도록 해.
+중요: 설명 없이 위 JSON 구조만 반환해야 해. 총 시간은 $availableMinutes분을 넘지 않도록 해.
 ''';
   }
 
