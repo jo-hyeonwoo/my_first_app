@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../features/auth/presentation/screens/splash_screen.dart';
 import '../features/auth/presentation/screens/login_screen.dart';
+import '../features/auth/presentation/screens/logout_screen.dart';
 import '../features/home/presentation/home_screen_wrapper.dart';
 import '../features/timer/presentation/timer_screen.dart';
 import '../features/score/presentation/score_screen.dart';
@@ -65,6 +66,11 @@ final GoRouter appRouter = GoRouter(
       path: '/login',
       name: 'login',
       builder: (context, state) => const LoginScreen(),
+    ),
+    GoRoute(
+      path: '/logout',
+      name: 'logout',
+      builder: (context, state) => const LogoutScreen(),
     ),
     ShellRoute(
       builder: (context, state, child) {

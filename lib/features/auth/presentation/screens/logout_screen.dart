@@ -2,11 +2,80 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../features/auth/domain/entities/user.dart';
-import '../../../features/auth/presentation/providers/auth_provider.dart';
+import '../../domain/entities/user.dart';
+import '../providers/auth_provider.dart';
 
-class ProfileScreen extends ConsumerWidget {
-  const ProfileScreen({super.key});
+class LogoutScreen extends ConsumerWidget {
+  const LogoutScreen({super.key});
+
+  Future<void> _handleLogout(BuildContext context, WidgetRef ref) async {
+    // Show confirmation dialog
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('로그아웃'),
+        content: const Text('정말 로그아웃하시겠습니까?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('취소'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.red,
+            ),
+            child: const Text('로그아웃'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true) {
+      return;
+    }
+
+    // Show loading indicator
+    if (context.mounted) {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => const Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+
+    try {
+      // Perform logout
+      await ref.read(authNotifierProvider.notifier).logout();
+
+      // Close loading dialog
+      if (context.mounted) {
+        Navigator.of(context).pop();
+      }
+
+      // Navigate to login screen
+      if (context.mounted) {
+        context.go('/login');
+      }
+    } catch (e) {
+      // Close loading dialog
+      if (context.mounted) {
+        Navigator.of(context).pop();
+      }
+
+      // Show error message
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('로그아웃 중 오류가 발생했습니다: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -14,7 +83,7 @@ class ProfileScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('프로필'),
+        title: const Text('로그아웃'),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -22,7 +91,7 @@ class ProfileScreen extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const SizedBox(height: 20),
+              const SizedBox(height: 40),
               
               // User Info Card
               Card(
@@ -36,11 +105,11 @@ class ProfileScreen extends ConsumerWidget {
                     children: [
                       // Avatar
                       CircleAvatar(
-                        radius: 40,
+                        radius: 50,
                         backgroundColor: Theme.of(context).colorScheme.primaryContainer,
                         child: Icon(
                           Icons.person,
-                          size: 40,
+                          size: 50,
                           color: Theme.of(context).colorScheme.onPrimaryContainer,
                         ),
                       ),
@@ -50,7 +119,7 @@ class ProfileScreen extends ConsumerWidget {
                       authState.when(
                         data: (user) => Text(
                           user?.name ?? '사용자',
-                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                                 fontWeight: FontWeight.bold,
                               ),
                         ),
@@ -103,63 +172,13 @@ class ProfileScreen extends ConsumerWidget {
                 ),
               ),
               
-              const SizedBox(height: 24),
-              
-              // Settings Section
-              Card(
-                elevation: 1,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Column(
-                  children: [
-                    ListTile(
-                      leading: const Icon(Icons.settings),
-                      title: const Text('설정'),
-                      trailing: const Icon(Icons.chevron_right),
-                      onTap: () {
-                        // TODO: Navigate to settings screen
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('설정 화면은 준비 중입니다')),
-                        );
-                      },
-                    ),
-                    const Divider(height: 1),
-                    ListTile(
-                      leading: const Icon(Icons.help_outline),
-                      title: const Text('도움말'),
-                      trailing: const Icon(Icons.chevron_right),
-                      onTap: () {
-                        // TODO: Navigate to help screen
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('도움말 화면은 준비 중입니다')),
-                        );
-                      },
-                    ),
-                    const Divider(height: 1),
-                    ListTile(
-                      leading: const Icon(Icons.info_outline),
-                      title: const Text('앱 정보'),
-                      trailing: const Icon(Icons.chevron_right),
-                      onTap: () {
-                        // TODO: Show app info
-                        showAboutDialog(
-                          context: context,
-                          applicationName: 'TimeLevelUp',
-                          applicationVersion: '1.0.0',
-                          applicationLegalese: '© 2025 TimeLevelUp',
-                        );
-                      },
-                    ),
-                  ],
-                ),
-              ),
-              
-              const SizedBox(height: 24),
+              const SizedBox(height: 40),
               
               // Logout Button
               ElevatedButton.icon(
-                onPressed: () => context.push('/logout'),
+                onPressed: authState.isLoading
+                    ? null
+                    : () => _handleLogout(context, ref),
                 icon: const Icon(Icons.logout),
                 label: const Text(
                   '로그아웃',
@@ -174,6 +193,23 @@ class ProfileScreen extends ConsumerWidget {
                   ),
                 ),
               ),
+              
+              const SizedBox(height: 16),
+              
+              // Cancel Button
+              OutlinedButton(
+                onPressed: () => context.pop(),
+                style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                child: const Text(
+                  '취소',
+                  style: TextStyle(fontSize: 16),
+                ),
+              ),
             ],
           ),
         ),
@@ -181,3 +217,4 @@ class ProfileScreen extends ConsumerWidget {
     );
   }
 }
+
