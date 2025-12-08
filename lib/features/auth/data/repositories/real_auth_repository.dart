@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' hide User, AuthException;
 import 'package:sentry_flutter/sentry_flutter.dart';
 
@@ -43,7 +44,7 @@ class RealAuthRepository implements AuthRepository {
     } on AuthException {
       rethrow;
     } on AuthApiException catch (e, stackTrace) {
-      print('AuthApiException during login: ${e.statusCode} - ${e.message}');
+      debugPrint('AuthApiException during login: ${e.statusCode} - ${e.message}');
       if (e.statusCode == '401' || e.message.contains('Invalid credentials')) {
         throw AuthException.invalidCredentials();
       }
@@ -61,9 +62,9 @@ class RealAuthRepository implements AuthRepository {
       throw AuthException.networkError();
     } catch (e, stackTrace) {
       // Log detailed error information
-      print('Error during login: $e');
-      print('Error type: ${e.runtimeType}');
-      print('Stack trace: $stackTrace');
+      debugPrint('Error during login: $e');
+      debugPrint('Error type: ${e.runtimeType}');
+      debugPrint('Stack trace: $stackTrace');
       
       // Send unknown errors to Sentry
       await Sentry.captureException(

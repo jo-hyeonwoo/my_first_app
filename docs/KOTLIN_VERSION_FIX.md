@@ -38,10 +38,12 @@ subprojects {
 ### 주요 변경 사항
 
 1. **새로운 `compilerOptions` DSL 사용**
+
    - Deprecated된 `kotlinOptions` 대신 새로운 `compilerOptions` DSL을 사용
    - Kotlin 2.0+ 버전과 호환되는 방식
 
 2. **모든 서브프로젝트에 적용**
+
    - `afterEvaluate` 블록을 사용하여 모든 서브프로젝트가 평가된 후 설정 적용
    - `KotlinCompile` 태스크에 대해 언어 버전과 API 버전을 1.9로 설정
    - 플러그인 포함 모든 서브프로젝트에 일괄 적용
@@ -63,6 +65,7 @@ subprojects {
 Kotlin 2.0+ 버전에서는 다음과 같은 방식으로 언어 버전을 설정할 수 있습니다:
 
 1. **프로젝트 레벨 설정** (현재 적용된 방법)
+
    ```kotlin
    subprojects {
        afterEvaluate {
@@ -89,10 +92,12 @@ Kotlin 2.0+ 버전에서는 다음과 같은 방식으로 언어 버전을 설�
 ### Deprecated API
 
 다음과 같은 설정은 더 이상 사용되지 않습니다:
+
 - `kotlinOptions { languageVersion = "1.9" }` ❌
 - `kotlinOptions { apiVersion = "1.9" }` ❌
 
 대신 `compilerOptions` DSL을 사용해야 합니다:
+
 - `compilerOptions { languageVersion.set(...) }` ✅
 - `compilerOptions { apiVersion.set(...) }` ✅
 
@@ -106,4 +111,3 @@ Kotlin 2.0+ 버전에서는 다음과 같은 방식으로 언어 버전을 설�
 
 - [Kotlin Gradle Compiler Options 문서](https://kotlinlang.org/docs/gradle-compiler-options.html)
 - [Kotlin Version 상수 참조](https://kotlinlang.org/docs/compiler-reference.html)
-
